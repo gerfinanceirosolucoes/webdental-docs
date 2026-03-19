@@ -86,7 +86,7 @@
 │   │                             │    │                                     │   │
 │   │  webdental:session:{id}     │    │  webdental:refresh:{id}             │   │
 │   │                             │    │                                     │   │
-│   │  TTL: access_token exp      │    │  TTL: 30 dias                       │   │
+│   │  TTL: access_token exp      │    │  TTL: 8 horas                       │   │
 │   │                             │    │                                     │   │
 │   └─────────────────────────────┘    └─────────────────────────────────────┘   │
 │                                                                                  │
