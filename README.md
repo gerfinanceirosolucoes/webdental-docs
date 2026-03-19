@@ -7,6 +7,7 @@ Documentação técnica do ecossistema Webdental.
 | Projeto | Descrição | Status |
 |---------|-----------|--------|
 | [SSO](sso/README.md) | Sistema de autenticação unificada com AWS Cognito | 📝 Documentado |
+| Webdental Legado | Sistema Legado em PHP 7.0 | ⏳ Em breve |
 | API | API Laravel do Webdental | ⏳ Em breve |
 | Angular | Frontend Angular 6 | ⏳ Em breve |
 | AngularJS | Frontend legado | ⏳ Em breve |
@@ -18,10 +19,10 @@ Documentação técnica do ecossistema Webdental.
 |------------|------------|
 | Backend | Laravel 5.4 / PHP 7.0 |
 | Frontend | Angular 6, AngularJS |
-| Banco de Dados | MySQL / MariaDB |
+| Banco de Dados | MariaDB |
 | Cache/Sessões | Valkey (Redis) |
 | Autenticação | AWS Cognito |
-| Infraestrutura | AWS (EC2, RDS, ECS, MSK) |
+| Infraestrutura | AWS (EC2) |
 
 ## Como Contribuir
 
