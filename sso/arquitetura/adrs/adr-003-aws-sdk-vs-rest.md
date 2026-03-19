@@ -6,7 +6,7 @@
 
 ## Data
 
-Março 2025
+Março 2026
 
 ## Contexto
 
@@ -124,7 +124,7 @@ As credenciais IAM são gerenciadas pelo Secrets Manager com rotação automáti
 └─────────────────┘     └─────────────────────┘     └─────────────┘
 
 Fluxo:
-1. API busca credenciais no Secrets Manager (IAM fixo)
+1. API busca credenciais no Secrets Manager
 2. Credenciais rotacionadas são retornadas
 3. API usa credenciais para chamar Cognito
 ```
