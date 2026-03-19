@@ -97,7 +97,7 @@ O response inclui `Set-Cookie` header para setar o cookie automaticamente.
 }
 ```
 
-**Causa:** Usuário autenticou no Cognito mas não existe na tabela `tbUsuarios`.
+**Causa:** Usuário autenticou no Cognito mas não existe na tabela `tbl_prestador`.
 
 ### Erro: Usuário inativo (403)
 
