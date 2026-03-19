@@ -8,9 +8,9 @@ Architecture Decision Records (ADRs) documentam decisões técnicas importantes 
 
 | ID | Título | Status | Data |
 |----|--------|--------|------|
-| [ADR-001](adr-001-cookie-based-sessions.md) | Cookie-based Sessions | ✅ Aceito | 2025-01 |
-| [ADR-002](adr-002-valkey-sessoes.md) | Valkey para Sessões | ✅ Aceito | 2025-01 |
-| [ADR-003](adr-003-aws-sdk-vs-rest.md) | AWS SDK vs REST | ✅ Aceito | 2025-03 |
+| [ADR-001](adr-001-cookie-based-sessions.md) | Cookie-based Sessions | ✅ Aceito | 2026-02 |
+| [ADR-002](adr-002-valkey-sessoes.md) | Valkey para Sessões | ✅ Aceito | 2026-02 |
+| [ADR-003](adr-003-aws-sdk-vs-rest.md) | AWS SDK vs REST | ✅ Aceito | 2026-03 |
 
 ## Status possíveis
 
