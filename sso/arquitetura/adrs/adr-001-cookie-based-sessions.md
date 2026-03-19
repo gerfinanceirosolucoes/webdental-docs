@@ -6,7 +6,7 @@
 
 ## Data
 
-Janeiro 2025
+Fevereiro 2026
 
 ## Contexto
 
