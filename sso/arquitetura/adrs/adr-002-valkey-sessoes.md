@@ -6,7 +6,7 @@
 
 ## Data
 
-Janeiro 2025
+Fevereiro 2025
 
 ## Contexto
 
@@ -66,8 +66,8 @@ TTL: mesmo do refresh_token mais longo
 
 | Dado | TTL | Motivo |
 |------|-----|--------|
-| Sessão | ~1 hora | Expira junto com access_token |
-| Refresh Token | ~30 dias | Permite renovar sem re-login |
+| Sessão | 20 minutos | Expira junto com access_token |
+| Refresh Token | 8 horas | Permite renovar sem re-login |
 
 Quando o access_token expira:
 1. Sessão é removida automaticamente pelo Valkey
@@ -93,7 +93,7 @@ Quando o access_token expira:
 
 ## Alternativas Consideradas
 
-### Banco de dados (MySQL)
+### Banco de dados (MariaDB)
 
 **Rejeitado porque:**
 - Latência maior (disco vs memória)
