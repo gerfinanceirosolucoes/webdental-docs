@@ -59,12 +59,12 @@ O Webdental é composto por múltiplas aplicações que historicamente tinham si
 
 **Responsabilidade:** Autenticação e gerenciamento de identidade
 
-- User Pool compartilhado com outros sistemas (AMEI)
+- User Pool compartilhado com outros sistemas (Webdental, AMEI)
 - Emissão de tokens JWT (ID, Access, Refresh)
 - Suporte a login com usuário/senha e Google (futuro)
 - Managed Login UI customizada
 
-**Localização:** Conta AWS AMEI (`237586137945`)
+**Localização:** Conta AWS AMEI
 
 ### Laravel API (Conta Webdental)
 
@@ -75,7 +75,7 @@ O Webdental é composto por múltiplas aplicações que historicamente tinham si
 - Refresh de tokens
 - Resolução de permissões do usuário no banco local
 
-**Localização:** EC2 na conta AWS Webdental (`843630347602`)
+**Localização:** EC2 na conta AWS Webdental
 
 ### Valkey
 
@@ -152,9 +152,9 @@ Todas as aplicações compartilham o mesmo cookie de sessão:
 
 ## Contas AWS
 
-| Recurso | Conta | ID |
-|---------|-------|-----|
-| Cognito, Secrets Manager | AMEI | `237586137945` |
-| EC2, RDS, Valkey | Webdental | `843630347602` |
+| Recurso | Conta |
+|---------|-------|
+| Cognito, Secrets Manager | AMEI |
+| EC2, Valkey | Webdental |
 
 O acesso cross-account é feito via credenciais IAM fixas que acessam o Secrets Manager para buscar credenciais rotacionadas.
