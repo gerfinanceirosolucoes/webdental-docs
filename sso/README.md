@@ -2,7 +2,7 @@
 
 ## O que é
 
-O SSO (Single Sign-On) do Webdental é o sistema de autenticação unificada que permite aos usuários acessarem múltiplas aplicações da empresa com um único login.
+O SSO (Single Sign-On) é o sistema de autenticação unificada que permite aos usuários acessarem múltiplas aplicações da empresa com um único login.
 
 ## Por que foi criado
 
@@ -11,9 +11,7 @@ Antes do SSO, cada sistema tinha seu próprio login:
 | Sistema | Autenticação antiga |
 |---------|---------------------|
 | Webdental (PHP Legado) | Sessão PHP + banco de dados |
-| Angular | Token próprio via API |
-| AngularJS | Sessão compartilhada com PHP |
-| AMEI | Sistema separado |
+| AMEI | Sistema da Medicina |
 
 **Problemas:**
 - Usuários precisavam fazer login múltiplas vezes
@@ -23,7 +21,7 @@ Antes do SSO, cada sistema tinha seu próprio login:
 
 ## Como funciona
 
-O SSO utiliza **AWS Cognito** como provedor de identidade centralizado e **Valkey** (Redis) para gerenciar sessões compartilhadas.
+O SSO utiliza **AWS Cognito** como provedor de identidade centralizado e **Valkey** para gerenciar sessões compartilhadas.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -58,12 +56,12 @@ O SSO utiliza **AWS Cognito** como provedor de identidade centralizado e **Valke
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      APLICAÇÕES                             │
-├─────────────────┬─────────────────┬─────────────────────────┤
-│   Webdental     │     Angular     │       AngularJS         │
-│   (PHP Legado)  │    (Angular 6)  │       (Legado)          │
-└─────────────────┴─────────────────┴─────────────────────────┘
+┌────────────────────────────────────────────────────────┐
+│                     APLICAÇÕES                         │
+├──────────────────────────┬─────────────────────────────┤
+│   Webdental              │          AMEI               │
+│   (PHP Legado)           │        (Angular)            │
+└──────────────────────────┴─────────────────────────────┘
 ```
 
 ## Benefícios
@@ -90,13 +88,7 @@ O SSO utiliza **AWS Cognito** como provedor de identidade centralizado e **Valke
 
 | Fase | Status | Descrição |
 |------|--------|-----------|
-| Fase 1 | 🟡 Em desenvolvimento | Login com usuário/senha |
+| Fase 1 | 🟡 Em desenvolvimento | Login com e-mail pessoal/senha |
 | Fase 2 | ⚪ Planejado | Login com Google Workspace |
 | Fase 3 | ⚪ Planejado | Migração completa do login legado |
 
-## Próximos Passos
-
-1. Finalizar testes de integração
-2. Deploy em ambiente de staging
-3. Testes com usuários piloto
-4. Rollout gradual em produção
