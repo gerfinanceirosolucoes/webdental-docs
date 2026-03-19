@@ -1,41 +1,45 @@
 # Sumário
 
-## Introdução
+## Webdental
 
 * [Visão Geral](README.md)
-* [Glossário](introducao/glossario.md)
 
-## Arquitetura
+## SSO
 
-* [Visão Geral da Arquitetura](arquitetura/visao-geral.md)
-* [Decisões de Design (ADRs)](arquitetura/adrs/README.md)
-  * [ADR-001: Cookie-based Sessions](arquitetura/adrs/adr-001-cookie-based-sessions.md)
-  * [ADR-002: Valkey para Sessões](arquitetura/adrs/adr-002-valkey-sessoes.md)
-  * [ADR-003: AWS SDK vs REST](arquitetura/adrs/adr-003-aws-sdk-vs-rest.md)
-* [Fluxos de Autenticação](arquitetura/fluxos-autenticacao.md)
-* [Diagrama de Componentes](arquitetura/diagrama-componentes.md)
+* [Introdução](sso/README.md)
+* [Glossário](sso/introducao/glossario.md)
 
-## Guias
+### Arquitetura
 
-* [Configuração do Ambiente Local](guias/configuracao-ambiente-local.md)
-* [Deploy em Produção](guias/deploy-producao.md)
-* [Troubleshooting](guias/troubleshooting.md)
+* [Visão Geral da Arquitetura](sso/arquitetura/visao-geral.md)
+* [Decisões de Design (ADRs)](sso/arquitetura/adrs/README.md)
+  * [ADR-001: Cookie-based Sessions](sso/arquitetura/adrs/adr-001-cookie-based-sessions.md)
+  * [ADR-002: Valkey para Sessões](sso/arquitetura/adrs/adr-002-valkey-sessoes.md)
+  * [ADR-003: AWS SDK vs REST](sso/arquitetura/adrs/adr-003-aws-sdk-vs-rest.md)
+* [Fluxos de Autenticação](sso/arquitetura/fluxos-autenticacao.md)
+* [Diagrama de Componentes](sso/arquitetura/diagrama-componentes.md)
 
-## Referência Técnica
+### Guias
 
-* [CognitoAdminService](referencia/cognito-admin-service.md)
-* [UserSessionService](referencia/user-session-service.md)
-* [Middleware de Autenticação](referencia/middleware-autenticacao.md)
-* [Configurações (config/sso.php)](referencia/configuracoes.md)
+* [Configuração do Ambiente Local](sso/guias/configuracao-ambiente-local.md)
+* [Deploy em Produção](sso/guias/deploy-producao.md)
+* [Troubleshooting](sso/guias/troubleshooting.md)
 
-## APIs
+### Referência Técnica
 
-* [POST /api/v1/token/exchange](apis/token-exchange.md)
-* [POST /api/v1/auth/refresh](apis/auth-refresh.md)
-* [POST /api/v1/auth/logout](apis/auth-logout.md)
+* [CognitoAdminService](sso/referencia/cognito-admin-service.md)
+* [UserSessionService](sso/referencia/user-session-service.md)
+* [Middleware de Autenticação](sso/referencia/middleware-autenticacao.md)
+* [Configurações](sso/referencia/configuracoes.md)
 
-## Operações
+### APIs
 
-* [Checklist de Deploy](operacoes/checklist-deploy.md)
-* [Monitoramento](operacoes/monitoramento.md)
-* [Rotação de Credenciais](operacoes/rotacao-credenciais.md)
+* [POST /api/v1/token/exchange](sso/apis/token-exchange.md)
+* [POST /api/v1/auth/refresh](sso/apis/auth-refresh.md)
+* [POST /api/v1/auth/logout](sso/apis/auth-logout.md)
+
+### Operações
+
+* [Checklist de Deploy](sso/operacoes/checklist-deploy.md)
+* [Monitoramento](sso/operacoes/monitoramento.md)
+* [Rotação de Credenciais](sso/operacoes/rotacao-credenciais.md)
