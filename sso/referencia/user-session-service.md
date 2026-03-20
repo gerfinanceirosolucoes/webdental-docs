@@ -96,7 +96,7 @@ $sessionData = $sessionService->createSession(
 2. Busca usuário no banco local pelo email (do ID token)
 3. Carrega permissões e unidades do usuário
 4. Salva sessão no Valkey com TTL
-5. Salva refresh token separadamente (TTL 30 dias)
+5. Salva refresh token separadamente
 6. Adiciona session_id ao SET do usuário (para logout global)
 7. Retorna dados da sessão + config do cookie
 ```
