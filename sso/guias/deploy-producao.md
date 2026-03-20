@@ -175,6 +175,6 @@ sudo mv API_autobackup_YYYYMMDD_HHMMSS API
 
 | Responsável | Área | Contato |
 |-------------|------|---------|
-| DevOps AMEI | Cognito, Secrets Manager | [email] |
+| DevOps AMEI | Cognito, Secrets Manager | daniel.rauh@amorsaude.com |
 | DevOps Webdental | EC2, Valkey | [email] |
-| Desenvolvimento | Aplicação | [email] |
+| Desenvolvimento | Aplicação | stephano.ferreira@amorsaude.com |
