@@ -7,7 +7,7 @@ Este guia documenta todos os passos necessários para fazer o deploy do SSO em p
 Antes de iniciar, certifique-se de que:
 
 - [ ] Cognito User Pool de produção está configurado
-- [ ] Valkey/Redis de produção está disponível
+- [ ] Valkey de produção está disponível
 - [ ] Credenciais IAM foram geradas
 - [ ] GitHub Secrets foram configurados
 
