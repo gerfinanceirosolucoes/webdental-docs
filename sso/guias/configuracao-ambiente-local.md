@@ -91,11 +91,11 @@ COGNITO_CLIENT_ID=50p5fo324rsgiruhrssvf5qg9q
 COGNITO_CLIENT_SECRET=seu_client_secret_aqui
 COGNITO_DOMAIN=https://dev-heimdall.auth.us-east-1.amazoncognito.com
 COGNITO_REDIRECT_URI=https://webdental.local/sso/callback.php
-COGNITO_LOGOUT_URI=https://webdental.local/sso/auth.php
+COGNITO_LOGOUT_URI=https://webdental.local/
 COGNITO_SCOPES=openid,email,profile
 
 # ============================================================
-# AWS CREDENTIALS (Local usa profile)
+# AWS CREDENTIALS (Local usa profile). Em prdução, adicionar no GitHub os secrets: AWS_COGNITO_ACCESS_KEY_ID, AWS_COGNITO_SECRET_ACCESS_KEY e AWS_COGNITO_CREDENTIALS_SECRET_ID
 # ============================================================
 AWS_COGNITO_PROFILE=cognito-secrets
 AWS_COGNITO_CREDENTIALS_SECRET_ID=webdental/cognito/admin-credentials
@@ -106,19 +106,21 @@ AWS_SUPPRESS_PHP_DEPRECATION_WARNING=true
 # ============================================================
 VALKEY_HOST=127.0.0.1
 VALKEY_PORT=6379
+VALKEY_SCHEME=tcp
 VALKEY_PASSWORD=
 VALKEY_DATABASE=0
 
 # ============================================================
 # COOKIE
 # ============================================================
+SSO_COOKIE_NAME=webdental_session_id
 SSO_COOKIE_DOMAIN=.webdental.local
 SSO_COOKIE_SECURE=true
 
 # ============================================================
 # CORS
 # ============================================================
-SSO_ALLOWED_ORIGINS=https://webdental.local,https://ng.webdental.local,https://angularjs.webdental.local
+SSO_ALLOWED_ORIGINS=https://webdental.local,https://ng.webdental.local,https://angularjs.webdental.local,https://api.webdental.local,https://apiwebvidas.webdental.local
 ```
 
 ## Passo 5: AWS CLI Profile
