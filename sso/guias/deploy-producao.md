@@ -33,8 +33,8 @@ COGNITO_USER_POOL_ID=us-east-1_XXXXXXXXX
 COGNITO_CLIENT_ID=xxxxxxxxxxxxxxxxxxxxxxxxxx
 COGNITO_CLIENT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxx
 COGNITO_DOMAIN=https://seu-dominio.auth.us-east-1.amazoncognito.com
-COGNITO_REDIRECT_URI=https://webdental.com.br/sso/callback.php
-COGNITO_LOGOUT_URI=https://webdental.com.br/sso/auth.php
+COGNITO_REDIRECT_URI=https://sistema.webdentalsolucoes.io/sso/callback.php
+COGNITO_LOGOUT_URI=https://sistema.webdentalsolucoes.io/
 COGNITO_SCOPES=openid,email,profile
 ```
 
@@ -43,13 +43,18 @@ COGNITO_SCOPES=openid,email,profile
 ```env
 VALKEY_HOST=seu-valkey-host
 VALKEY_PORT=6379
+VALKEY_SCHEME=tls
 VALKEY_PASSWORD=sua-senha
 VALKEY_DATABASE=0
+VALKEY_SESSION_PREFIX=webdental:session:
+VALKEY_USER_SESSION_PREFIX=webdental:user_sessions:
+VALKEY_REFRESH_TTL=28800
 ```
 
 ### Cookie
 
 ```env
+SSO_COOKIE_NAME=webdental_session_id
 SSO_COOKIE_DOMAIN=.webdental.com.br
 SSO_COOKIE_SECURE=true
 ```
@@ -57,7 +62,7 @@ SSO_COOKIE_SECURE=true
 ### CORS
 
 ```env
-SSO_ALLOWED_ORIGINS=https://webdental.com.br,https://ng.webdental.com.br,https://angularjs.webdental.com.br
+SSO_ALLOWED_ORIGINS=https://sistema.webdentalsolucoes.io,https://ng.webdentalsolucoes.io,https://novo.webdentalsolucoes.io,https://api.webdentalsolucoes.io,https://apiwebvidas.webdentalsolucoes.io
 ```
 
 ## 3. Workflow do GitHub Actions
