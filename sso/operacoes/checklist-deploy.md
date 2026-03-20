@@ -11,10 +11,10 @@
 
 ### Configuração AWS (uma vez)
 
-- [ ] IAM User criado na conta AMEI
-- [ ] Permissões Cognito configuradas
-- [ ] Secret criado no Secrets Manager
-- [ ] Rotação de credenciais configurada (15 dias)
+- [ ] IAM User criado (conta AMEI)
+- [ ] Permissões Cognito configuradas (conta AMEI)
+- [ ] Secret criado no Secrets Manager (conta AMEI)
+- [ ] Rotação de credenciais configurada (15 dias) (conta AMEI)
 
 ### GitHub Secrets (uma vez)
 
@@ -24,10 +24,9 @@
 
 ### Infraestrutura
 
-- [ ] Valkey/Redis acessível
-- [ ] Cognito User Pool configurado
+- [ ] Valkey acessível
+- [ ] Cognito User Pool configurado (conta AMEI)
 - [ ] Certificados SSL válidos
-- [ ] DNS configurado para subdomínios
 
 ---
 
@@ -126,14 +125,8 @@ php artisan cache:clear
 
 | Problema | Contato |
 |----------|---------|
-| Cognito/AWS AMEI | [DevOps AMEI] |
-| Servidor/Valkey | [DevOps Webdental] |
-| Aplicação | [Tech Lead] |
+| Cognito/AWS AMEI | daniel.rauh@amorsaude.com |
+| Servidor/Valkey | stephano.ferreira@amorsaude.com |
+| Aplicação | stephano.ferreira@amorsaude.com |
 
 ---
-
-## Histórico de Deploys
-
-| Data | Versão | Responsável | Status |
-|------|--------|-------------|--------|
-| YYYY-MM-DD | vX.X.X | Nome | ✅/❌ |
