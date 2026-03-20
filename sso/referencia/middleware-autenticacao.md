@@ -46,7 +46,7 @@ O `AuthenticateWithValkey` é o middleware que protege as rotas da API. Ele extr
 
 protected $routeMiddleware = [
     // ...
-    'sso.auth' => \App\SSO\Http\Middleware\AuthenticateWithValkey::class,
+    'auth.sso' => \App\SSO\Http\Middleware\AuthenticateWithValkey::class,
 ];
 ```
 
@@ -57,10 +57,10 @@ protected $routeMiddleware = [
 
 // Rota individual
 Route::get('/user', 'UserController@show')
-    ->middleware('sso.auth');
+    ->middleware('auth.sso');
 
 // Grupo de rotas
-Route::middleware(['sso.auth'])->group(function () {
+Route::middleware(['auth.sso'])->group(function () {
     Route::get('/agenda', 'AgendaController@index');
     Route::post('/paciente', 'PacienteController@store');
 });
@@ -192,8 +192,9 @@ Route::post('/v1/auth/refresh', 'RefreshTokenController@refresh');
 
 // Rotas protegidas (com middleware)
 Route::middleware(['sso.auth'])->group(function () {
-    Route::post('/v1/auth/logout', 'LogoutController@logout');
-    Route::get('/v1/user', 'UserController@show');
+    Route::get('/me', 'App\SSO\Controllers\AuthController@me');
+    Route::post('/logout', 'App\SSO\Controllers\AuthController@logout');
+    Route::post('/logout-all', 'App\SSO\Controllers\AuthController@logoutAll');
     // ...
 });
 ```
