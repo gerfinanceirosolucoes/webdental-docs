@@ -92,9 +92,6 @@ return [
     
     'cors' => [
         'allowed_origins' => explode(',', env('SSO_ALLOWED_ORIGINS', '')),
-        'allowed_methods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-        'allowed_headers' => ['Content-Type', 'Authorization', 'X-Requested-With'],
-        'supports_credentials' => true,
     ],
 
     /*
@@ -105,9 +102,9 @@ return [
     
     'allowed_ips' => [
         '127.0.0.1',           // Localhost
+        '::1',
+        // IP dos servidores que podem chamar endpoints dando bypass no SSO
         '10.0.0.0/8',          // Rede interna AWS
-        '172.16.0.0/12',       // Docker
-        '192.168.0.0/16',      // Rede local
     ],
 
 ];
@@ -181,9 +178,6 @@ Configurações de CORS para requisições cross-origin.
 | Chave | Descrição |
 |-------|-----------|
 | `allowed_origins` | Lista de origens permitidas |
-| `allowed_methods` | Métodos HTTP permitidos |
-| `allowed_headers` | Headers permitidos |
-| `supports_credentials` | Permite cookies cross-origin |
 
 ### allowed_ips
 
@@ -203,7 +197,7 @@ COGNITO_CLIENT_ID=50p5fo324rsgiruhrssvf5qg9q
 COGNITO_CLIENT_SECRET=seu_secret_aqui
 COGNITO_DOMAIN=https://dev-heimdall.auth.us-east-1.amazoncognito.com
 COGNITO_REDIRECT_URI=https://webdental.local/sso/callback.php
-COGNITO_LOGOUT_URI=https://webdental.local/sso/auth.php
+COGNITO_LOGOUT_URI=https://webdental.local/
 COGNITO_SCOPES=openid,email,profile
 
 # AWS (profile local)
@@ -214,15 +208,20 @@ AWS_SUPPRESS_PHP_DEPRECATION_WARNING=true
 # Valkey
 VALKEY_HOST=127.0.0.1
 VALKEY_PORT=6379
+VALKEY_SCHEME=tcp
 VALKEY_PASSWORD=
 VALKEY_DATABASE=0
+VALKEY_SESSION_PREFIX=webdental:session:
+VALKEY_USER_SESSION_PREFIX=webdental:user_sessions:
+VALKEY_REFRESH_TTL=28800
 
 # Cookie
+SSO_COOKIE_NAME=webdental_session_id
 SSO_COOKIE_DOMAIN=.webdental.local
 SSO_COOKIE_SECURE=true
 
 # CORS
-SSO_ALLOWED_ORIGINS=https://webdental.local,https://ng.webdental.local,https://angularjs.webdental.local
+SSO_ALLOWED_ORIGINS=https://webdental.local,https://ng.webdental.local,https://angularjs.webdental.local,https://api.webdental.local,https://apiwebvidas.webdental.local
 ```
 
 ### Produção (.env)
@@ -234,8 +233,8 @@ COGNITO_USER_POOL_ID=us-east-1_XXXXXXXXX
 COGNITO_CLIENT_ID=xxxxxxxxxxxxxxxxxxxxxxxxxx
 COGNITO_CLIENT_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxx
 COGNITO_DOMAIN=https://seu-dominio.auth.us-east-1.amazoncognito.com
-COGNITO_REDIRECT_URI=https://webdental.com.br/sso/callback.php
-COGNITO_LOGOUT_URI=https://webdental.com.br/sso/auth.php
+COGNITO_REDIRECT_URI=https://sistema.webdentalsolucoes.io/sso/callback.php
+COGNITO_LOGOUT_URI=https://sistema.webdentalsolucoes.io/
 COGNITO_SCOPES=openid,email,profile
 
 # AWS (credenciais diretas injetadas pelo CI/CD)
@@ -246,15 +245,20 @@ AWS_COGNITO_CREDENTIALS_SECRET_ID=webdental/cognito/admin-credentials
 # Valkey
 VALKEY_HOST=valkey.webdental.internal
 VALKEY_PORT=6379
+VALKEY_SCHEME=tls
 VALKEY_PASSWORD=sua_senha_segura
 VALKEY_DATABASE=0
+VALKEY_SESSION_PREFIX=webdental:session:
+VALKEY_USER_SESSION_PREFIX=webdental:user_sessions:
+VALKEY_REFRESH_TTL=28800
 
 # Cookie
-SSO_COOKIE_DOMAIN=.webdental.com.br
+SSO_COOKIE_NAME=webdental_session_id
+SSO_COOKIE_DOMAIN=.sistema.webdentalsolucoes.io
 SSO_COOKIE_SECURE=true
 
 # CORS
-SSO_ALLOWED_ORIGINS=https://webdental.com.br,https://ng.webdental.com.br,https://angularjs.webdental.com.br
+SSO_ALLOWED_ORIGINS=https://sistema.webdentalsolucoes.io,https://ng.webdentalsolucoes.io.br,https://novo.webdentalsolucoes.io,https://api.webdentalsolucoes.io,https://apiwebvidas.webdentalsolucoes.io
 ```
 
 ## Acessando Configurações no Código
