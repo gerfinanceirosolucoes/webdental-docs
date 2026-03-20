@@ -264,7 +264,7 @@ $canRefresh = $sessionService->hasValidRefreshToken($sessionId);
 }
 ```
 
-**TTL:** Baseado no `expires_at` (geralmente 1 hora)
+**TTL:** Baseado no `expires_at` que vem do Cognito
 
 ### Refresh Token
 
@@ -280,8 +280,6 @@ $canRefresh = $sessionService->hasValidRefreshToken($sessionId);
     "created_at": 1234567890
 }
 ```
-
-**TTL:** 30 dias
 
 ### Mapeamento Usuário → Sessões
 
