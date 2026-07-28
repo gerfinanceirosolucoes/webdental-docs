@@ -1,218 +1,79 @@
-# Guia de Desenvolvimento — Mevo API
+# Guia de Desenvolvimento — mevo-config.php
 
-## Pré-requisitos
+O backend PHP chama a Mevo API através do `mevo-proxy.php`, que lê endpoint e credencial do `mevo-config.php`. Este arquivo **não é versionado** — cada ambiente (local, staging, produção) tem o seu.
 
-| Ferramenta | Versão mínima | Instalação |
+## 1. Adicionar ao .gitignore
+
+Confirmar que o arquivo está ignorado no repositório PHP:
+
+```
+mevo-config.php
+```
+
+## 2. Criar o arquivo localmente
+
+Na raiz do projeto PHP (mesmo diretório do `mevo-proxy.php`):
+
+```php
+<?php
+// mevo-config.php — NAO versionar
+return [
+    // Local: aponte para a Mevo API rodando localmente ou para o ALB de staging
+    'base_url' => 'http://localhost:3000',
+    'api_key'  => '<valor do secret hmg/mevo-api/internal-api-key>',
+];
+```
+
+### Valores por ambiente
+
+| Ambiente | `base_url` | Fonte da `api_key` |
 |---|---|---|
-| Node.js | 20.x | https://nodejs.org |
-| Docker Desktop | 24.x | https://docker.com |
-| AWS CLI | 2.x | https://aws.amazon.com/cli |
-| Git | 2.x | https://git-scm.com |
+| Local (API local) | `http://localhost:3000` | Mesmo valor de staging |
+| Local (contra staging)* | `http://internal-hmg-mevo-alb-internal-1641981751.sa-east-1.elb.amazonaws.com` | `hmg/mevo-api/internal-api-key` |
+| Staging (servidor PHP) | `http://internal-hmg-mevo-alb-internal-1641981751.sa-east-1.elb.amazonaws.com` | `hmg/mevo-api/internal-api-key` |
+| Produção (servidor PHP) | `http://internal-prd-mevo-alb-internal-1961577618.us-east-1.elb.amazonaws.com` | `prd/mevo-api/internal-api-key` |
 
----
+\* O ALB Internal só é alcançável de dentro da VPC (`172.31.0.0/16`). Da máquina local o acesso só funciona via VPN/túnel para a VPC — na prática, para dev local rode a Mevo API localmente (`npm run dev`) e aponte para `localhost:3000`.
 
-## Setup do Ambiente Local
-
-### 1. Clonar o repositório
+## 3. Obter a API Key
 
 ```bash
-git clone https://github.com/gerfinanceirosolucoes/mevo_api.git
-cd mevo_api
+aws secretsmanager get-secret-value \
+  --secret-id hmg/mevo-api/internal-api-key \
+  --region sa-east-1 --query SecretString --output text
 ```
 
-### 2. Instalar dependências
+Nunca compartilhar a key por e-mail ou chat — usar canal seguro. Nos servidores, restringir permissões do arquivo:
 
 ```bash
-npm install
+chmod 640 mevo-config.php
 ```
 
-### 3. Configurar variáveis de ambiente
+## 4. Testar a chamada
 
-Crie o arquivo `.env` na raiz do projeto (nunca commitar):
-
-```env
-# Aplicação
-NODE_ENV=development
-APP_PORT=3000
-APP_ORIGIN=*
-
-# Banco de dados
-DB_HOST=IP_DO_BANCO_STAGING
-DB_PORT=3306
-DB_USERNAME=mevo_api
-DB_PASSWORD=SUA_SENHA
-DB_DATABASE=NOME_DO_BANCO
-
-# AWS — credenciais do stg-mevo-s3-user (solicitar ao TechLead)
-AWS_ACCESS_KEY_ID=AKIA...
-AWS_SECRET_ACCESS_KEY=...
-AWS_REGION=sa-east-1
-
-# S3
-AWS_BUCKET=stg-webdental-mevo-docs-843630347602-sa-east-1-an
-S3_PREFIX=dev-SEU_NOME
-
-# Mevo
-MEVO_API_URL=https://api.mevo.com.br
-MEVO_USERNAME=...
-MEVO_PASSWORD=...
-MEVO_WEBHOOK_TOKEN=...
-```
-
-> **Atenção:** solicite as credenciais ao TechLead via canal seguro. Nunca compartilhe por e-mail ou chat.
-
-### 4. Rodar em modo desenvolvimento
+Com a Mevo API rodando localmente:
 
 ```bash
-npm run dev
+curl -X POST http://localhost:3000/mevo/receita \
+  -H "Content-Type: application/json" \
+  -H "X-Api-Key: <api_key>" \
+  -d '{ ... payload ... }'
 ```
 
-O servidor inicia em `http://localhost:3000`. Alterações no código recarregam automaticamente via `tsx watch`.
+Respostas do middleware `verifyInternalAuth`:
 
----
-
-## Scripts Disponíveis
-
-| Script | Comando | O que faz |
-|---|---|---|
-| Desenvolvimento | `npm run dev` | Inicia com hot-reload via tsx |
-| Build | `npm run build` | Compila TypeScript para `dist/` |
-| Validação completa | `npm run validate` | Build + Docker build + Docker run |
-| Formatação | `npm run format` | Formata o código com Prettier |
-
----
-
-## npm run validate
-
-O `validate` é a **fonte da verdade** antes de qualquer push para staging. Ele simula exatamente o que acontece em produção:
-
-```bash
-npm run validate
-```
-
-Resultado esperado:
-```
-> tsc                          ← TypeScript sem erros
-[+] Building ... FINISHED      ← Imagem Docker construída
-Database connection failed     ← Esperado (sem banco local)
-API rodando 3000               ← Container subiu corretamente
-```
-
-> Se o `validate` passar, o código está pronto para o merge em staging.
-
----
-
-## Estrutura do Projeto
-
-```
-src/
-  clients/        ← comunicação com APIs externas (Mevo)
-  config/         ← variáveis de ambiente (env.ts)
-  constants/      ← constantes da aplicação
-  controllers/    ← entrada HTTP, sem lógica de negócio
-  database/       ← configuração do TypeORM (data-source.ts)
-  entities/       ← entidades do banco de dados
-  helpers/        ← funções utilitárias
-  mappers/        ← transformação de dados (Mevo → domínio interno)
-  middleware/     ← validações transversais HTTP
-  providers/      ← provedores externos (S3, storage local)
-  repositories/   ← acesso ao banco de dados
-  routes/         ← definição das rotas (routes.ts)
-  schemas/        ← schemas de validação Zod
-  services/       ← regras de negócio
-  index.ts        ← entry point da aplicação
-```
-
----
-
-## Padrões de Código
-
-### Conventional Commits
-
-Todos os commits devem seguir o padrão Conventional Commits. O `commitlint` está configurado e bloqueia commits fora do padrão.
-
-| Tipo | Quando usar |
+| Cenário | Resposta |
 |---|---|
-| `feat` | Nova funcionalidade |
-| `fix` | Correção de bug |
-| `chore` | Manutenção, configuração, dependências |
-| `refactor` | Refatoração sem nova funcionalidade |
-| `docs` | Documentação |
-| `build` | Mudanças no processo de build |
-| `test` | Adição ou correção de testes |
+| IP fora do CIDR permitido (SSM) | `403 Forbidden` |
+| `X-Api-Key` ausente ou inválida | `401 Unauthorized` |
+| Ambos válidos | Segue para o handler |
 
-**Exemplos:**
-```bash
-git commit -m "feat: adiciona endpoint de cancelamento de receita"
-git commit -m "fix: corrige tipagem no finalizar-prescricao-service"
-git commit -m "chore: atualiza dependências do projeto"
-```
+> **A verificação de CIDR é defesa em profundidade, não a barreira principal.** Atrás de qualquer ALB o IP de origem visto pelo middleware é sempre o do nó do ALB (`172.31.x.x`), então o CIDR não distingue uma chamada interna de uma externa. Quem protege as rotas internas de fato é a combinação **listener do ALB** (bloqueia o path pela internet) + **`X-Api-Key`** (credencial). Detalhes em [Autenticação](autenticacao.md).
 
-### TypeScript Strict
+> Em dev local, o parâmetro SSM de whitelist não existe, então a validação de IP é pulada automaticamente (`if (!process.env.INTERNAL_ALLOWED_IPS_PARAMETER) return []`). Basta a `X-Api-Key`.
 
-O projeto usa TypeScript com configuração estrita. Algumas regras importantes:
+## Troubleshooting
 
-```typescript
-// ❌ Não usar — pode causar erro em runtime
-const nome = usuario.nome;
-
-// ✅ Usar — trata o caso undefined
-const nome = usuario.nome ?? '';
-const nome = usuario.nome!; // apenas se tiver certeza que existe
-
-// ❌ Não usar com verbatimModuleSyntax
-import { Request } from 'express';
-
-// ✅ Usar para tipos apenas
-import type { Request } from 'express';
-
-// ❌ Dependência circular — causa erro em runtime com node puro
-import { Prescricao } from './prescricao.js';
-@ManyToOne(() => Prescricao)
-
-// ✅ Resolver dependência circular
-import type { Prescricao } from './prescricao.js';
-@ManyToOne('Prescricao')
-```
-
-### Imports com .js
-
-O projeto usa ES Modules com `"type": "module"`. Todos os imports de arquivos locais precisam da extensão `.js` (mesmo sendo `.ts`):
-
-```typescript
-// ✅ Correto
-import { ReceitaController } from '../controllers/receita-controller.js';
-
-// ❌ Errado — vai falhar em runtime
-import { ReceitaController } from '../controllers/receita-controller';
-```
-
----
-
-## Fluxo de Branches
-
-```
-main           ← código de produção
-  │
-  └── staging  ← ambiente de homologação (deploy automático)
-        │
-        └── feat/minha-feature  ← desenvolvimento
-```
-
-**Regras:**
-- Nunca commitar diretamente em `staging` ou `main`
-- Sempre criar uma branch `feat/*` ou `fix/*` a partir de `staging`
-- Rodar `npm run validate` antes do merge
-- Abrir PR para `staging` — solicitar revisão do TechLead
-
----
-
-## Credenciais AWS Locais
-
-O projeto usa o AWS SDK v3 que resolve credenciais automaticamente nesta ordem:
-
-1. Variáveis de ambiente (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`)
-2. `~/.aws/credentials`
-3. IAM Role (ECS Fargate em staging/produção)
-
-Em desenvolvimento local, coloque as credenciais do `stg-mevo-s3-user` no `.env`. Em staging e produção, o container usa a IAM Role automaticamente — sem credenciais no código.
+- **`403` inesperado em staging** — verifique se o IP do servidor PHP está dentro de `172.31.0.0/16` e se o parâmetro SSM `/mevo-api/staging/internal-allowed-ips` está correto. Lembre-se do cache em memória por task: mudanças no SSM podem demorar a propagar (force new deployment se necessário).
+- **`401`** — a key no `mevo-config.php` diverge do secret atual. Se o secret foi rotacionado, atualize o `mevo-config.php` nos servidores e force novo deployment do ECS para renovar o cache das tasks (ver [Autenticação → Rotação de credenciais](autenticacao.md)).
+- **Timeout no ALB Internal** — chamada vinda de fora da VPC, ou Security Group `*-mevo-alb-internal-sg` sem ingress TCP 80 do seu IP/CIDR de origem.

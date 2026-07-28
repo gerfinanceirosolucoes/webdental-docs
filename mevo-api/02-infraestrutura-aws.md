@@ -1,104 +1,64 @@
-# Infraestrutura AWS — Mevo API
+# Infraestrutura
 
-## Inventário de Recursos
+Conta AWS `843630347602`. Staging em `sa-east-1`, produção em `us-east-1` (VPC `vpc-81f5f4f8`).
+
+## Novos recursos — ALB Internal (Julho/2026)
 
 ### Staging (sa-east-1)
 
-| Recurso | Nome | Observação |
-|---|---|---|
-| S3 Bucket | `stg-webdental-mevo-docs-843630347602-sa-east-1-an` | Versionamento habilitado, acesso público bloqueado |
-| IAM User (dev local) | `stg-mevo-s3-user` | Access Keys para desenvolvimento local |
-| IAM Policy (dev local) | `Stg-MevoServiceAccountS3Policy` | Acesso apenas ao bucket de staging |
-| IAM User (CI/CD) | `hmg-mevo-github-actions` | Usado pelo GitHub Actions para deploy |
-| IAM Policy (CI/CD) | `Hmg-MevoGitHubActionsPolicy` | Permissões mínimas para ECR + ECS |
-| IAM Task Role | `hmg-mevo-task-role` | Assumida pelo container — acesso ao S3 |
-| IAM Execution Role | `hmg-mevo-ecs-execution-role` | Usada pelo agente ECS — ECR, CloudWatch, Secrets |
-| ECR Repository | `staging/mevo-api` | Tag immutability habilitado |
-| ECS Cluster | `hmg-mevo-ecs-cluster` | 1 cluster por projeto |
-| Task Definition | `hmg-mevo-api` | 0.5 vCPU / 1 GB RAM |
-| ECS Service | `hmg-mevo-api-service` | 1 task, vinculado ao ALB |
-| ALB | `hmg-mevo-alb` | HTTPS:443 + redirect HTTP:80 |
-| Target Group | `hmg-mevo-target-group` | IP type, porta 3000, health check /health |
-| ACM Certificate | `stg-mevo-api.webdentalsolucoes.io` | Validado via DNS (Cloudflare) |
-| CloudWatch Log Group | `/ecs/hmg-mevo-api` | Retenção: 1 mês |
-| Secrets Manager | `hmg/mevo-api/database-user` | DB_USERNAME + DB_PASSWORD |
-| Secrets Manager | `hmg/mevo-api/mevo-credentials` | MEVO_USERNAME + MEVO_PASSWORD |
-| Secrets Manager | `hmg/mevo-api/webhook` | MEVO_WEBHOOK_TOKEN |
+| Recurso | Nome / Valor |
+|---|---|
+| ALB Internal | `hmg-mevo-alb-internal` |
+| DNS | `internal-hmg-mevo-alb-internal-1641981751.sa-east-1.elb.amazonaws.com` |
+| Security Group | `hmg-mevo-alb-internal-sg` — ingress TCP 80 de `172.31.0.0/16` |
+| Target Group | `hmg-mevo-internal-target-group` — HTTP, porta 3000, health check `/health` |
+| SSM Parameter | `/mevo-api/staging/internal-allowed-ips` → `172.31.0.0/16` |
+| Secret | `hmg/mevo-api/internal-api-key` (Secrets Manager) |
 
 ### Produção (us-east-1)
 
-> A criar — seguir o runbook de infraestrutura substituindo os valores conforme tabela de diferenças.
-
----
-
-## Configuração de Rede
-
-### VPC
-
-| Ambiente | VPC ID | CIDR |
-|---|---|---|
-| Staging | `vpc-58a7ec3c` (default_aws) | `172.31.0.0/16` |
-| Produção | `vpc-81f5f4f8` | `172.31.0.0/16` |
-
-### Subnets de Staging
-
-| Subnet ID | AZ | CIDR |
-|---|---|---|
-| `subnet-74c6223d` | sa-east-1b | `172.31.32.0/20` |
-| `subnet-3ad81a5d` | sa-east-1a | `172.31.0.0/20` |
-| `subnet-787bd920` | sa-east-1c | `172.31.16.0/20` |
-
-### Security Groups
-
-| Nome | ID | Propósito |
-|---|---|---|
-| `hmg-mevo-alb-sg` | — | ALB — ingress 443/80 whitelist, egress 3000 para task |
-| `hmg-mevo-service-sg` | `sg-063937277b90624d9` | Task ECS — ingress 3000 da VPC, egress all |
-| `hmg-mensageria-ecs-security-group` | `sg-0a7a137decbbf69ec` | SG dos VPC Endpoints — deve incluir ingress 443 para hmg-mevo-service-sg |
-
-> **Atenção:** ao criar novos serviços ECS que precisam de CloudWatch/ECR via VPC Endpoints, sempre adicionar o novo Security Group ao `sg-0a7a137decbbf69ec` (ingress 443) e associar o novo SG aos VPC Endpoints.
-
-### VPC Endpoints (Compartilhados)
-
-| Endpoint | Serviço | ID |
-|---|---|---|
-| CloudWatch Logs | `com.amazonaws.sa-east-1.logs` | `vpce-0e3ebe6d5b4cfb964` |
-| ECR API | `com.amazonaws.sa-east-1.ecr.api` | `vpce-0486928ea24fc59e4` |
-| ECR Docker | `com.amazonaws.sa-east-1.ecr.dkr` | `vpce-06cbe9c8e0210e8ce` |
-| S3 | `com.amazonaws.sa-east-1.s3` | `vpce-0e9b7b89587624565` |
-
----
-
-## Variáveis de Ambiente
-
-### Configuração (Task Definition)
-
-| Variável | Valor em Staging | Observação |
-|---|---|---|
-| `NODE_ENV` | `staging` | |
-| `AWS_REGION` | `sa-east-1` | |
-| `S3_BUCKET` | `stg-webdental-mevo-docs-843630347602-sa-east-1-an` | |
-| `S3_PREFIX` | `staging` | Vazio em produção |
-| `DB_HOST` | IP do banco de staging | |
-| `DB_PORT` | `3306` | |
-| `DB_DATABASE` | Nome do banco | |
-| `MEVO_API_URL` | URL da API da Mevo | |
-
-### Secrets (AWS Secrets Manager)
-
-| Variável | Secret | Chave |
-|---|---|---|
-| `DB_USERNAME` | `hmg/mevo-api/database-user` | `DB_USERNAME` |
-| `DB_PASSWORD` | `hmg/mevo-api/database-user` | `DB_PASSWORD` |
-| `MEVO_USERNAME` | `hmg/mevo-api/mevo-credentials` | `MEVO_USERNAME` |
-| `MEVO_PASSWORD` | `hmg/mevo-api/mevo-credentials` | `MEVO_PASSWORD` |
-| `MEVO_WEBHOOK_TOKEN` | `hmg/mevo-api/webhook` | `MEVO_WEBHOOK_TOKEN` |
-
----
-
-## Endpoints
-
-| Ambiente | URL Base |
+| Recurso | Nome / Valor |
 |---|---|
-| Staging | `https://stg-mevo-api.webdentalsolucoes.io` |
-| Produção | A definir |
+| ALB Internal | `prd-mevo-alb-internal` |
+| DNS | `internal-prd-mevo-alb-internal-1961577618.us-east-1.elb.amazonaws.com` |
+| Security Group | `prd-mevo-alb-internal-sg` — ingress TCP 80 de `172.31.0.0/16` |
+| Target Group | `prd-mevo-internal-target-group` — HTTP, porta 3000, health check `/health` |
+| SSM Parameter | `/mevo-api/production/internal-allowed-ips` → `172.31.0.0/16` |
+| Secret | `prd/mevo-api/internal-api-key` (Secrets Manager) |
+| Auto Scaling | Target tracking CPU 70% — min 2, max 5 tasks |
+
+## Recursos existentes (produção)
+
+| Recurso | Nome |
+|---|---|
+| ECS Cluster | `prd-mevo-ecs-cluster` (Fargate) |
+| ECS Service | `prd-mevo-api-service` — 2 tasks base, subnets privadas, sem IP público |
+| Task Definition | `prd-mevo-api` — task role `prd-mevo-task-role`, execution role `prd-mevo-ecs-execution-role` |
+| ECR | `production/mevo-api` (tag immutability) |
+| ALB External | `prd-mevo-alb` — HTTPS:443 aberto (`0.0.0.0/0`), protegido pelo listener (allowlist `/webhook/*` + default 403) |
+| Listener rule (443) | `/webhook/*` → target group (prio 10); default → fixed response 403 |
+| NAT Gateway | `prd-mevo-nat-gateway` — saída para a API externa da Mevo |
+| VPC Endpoints | `logs`, `ecr.api`, `ecr.dkr` (Interface) + `s3` (Gateway) |
+| S3 (docs) | `prd-webdental-mevo-docs-843630347602-us-east-1-an` |
+| S3 (JSON) | `prd-webdental-mevo-json-843630347602-us-east-1-an` |
+| Secrets | `prd/mevo-api/database-user`, `prd/mevo-api/mevo-credentials`, `prd/mevo-api/webhook`, `prd/mevo-api/internal-api-key` |
+| Log group | `/ecs/prd-mevo-api` |
+| IAM User (CI/CD) | `prd-mevo-github-actions` — access key estática usada pelo GitHub Actions no deploy (candidato futuro a OIDC) |
+
+> **Removido:** Cloudflare Access na rota interna. Substituído por ALB Internal + middleware `verifyInternalAuth`.
+
+## Security Group do ALB External — aberto por decisão
+
+O SG do `prd-mevo-alb` mantém ingress `0.0.0.0/0` nas portas 443 e 80. Foi uma **decisão consciente**: fechar aos ranges do Cloudflare exigiria mantê-los atualizados manualmente (os ranges mudam), e a proteção das rotas é garantida por outras camadas — o **listener** (bloqueia paths internos) e os **middlewares** (`verifyMevoWebhook` valida `CF-Connecting-IP` + Bearer; `verifyInternalAuth` valida `X-Api-Key`).
+
+Risco residual aceito: o ALB responde a scan e tentativas diretas na internet (força bruta impraticável contra segredos de alta entropia). A alternativa sem manutenção manual é uma **customer-managed prefix list** com os ranges do Cloudflare, atualizada por Lambda agendado — não implementada.
+
+> Sobre a porta 80: em **produção** o SG do ALB tem regra de ingress na 80 (`0.0.0.0/0`) e o listener HTTP:80 faz redirect 80→443. Em **staging** não há regra na 80. Com Cloudflare Proxy + SSL Full o Cloudflare fala 443 com a origem, então o redirect raramente é exercitado na prática — a porta 80 em produção é candidata a remoção para reduzir superfície, mas isso deve ser validado antes (confirmar que nada depende do redirect).
+
+## Pendências de infraestrutura
+
+1. Criar ElastiCache Valkey `app-valkey-webdental-prod` e migrar o cache dos middlewares (inconsistência entre tasks com Auto Scaling)
+2. Habilitar Access Log do ALB (grava em S3) — estava desabilitado; sem ele não há auditoria retroativa de acesso
+3. Lifecycle rule nos buckets S3 — alinhar retenção de 7 anos com o jurídico
+4. Definir estratégia de monitoramento de percentis (p50, p95, p99)
+5. Adicionar usuário `mevo_api` no banco de produção com os GRANTs necessários
