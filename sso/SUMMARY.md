@@ -1,14 +1,14 @@
-# Webdental SSO
+# Sumário
 
 ## Introdução
 
-* [Visão Geral](README.md)
+* [Visão Geral](./)
 * [Glossário](introducao/glossario.md)
 
 ## Arquitetura
 
 * [Visão Geral da Arquitetura](arquitetura/visao-geral.md)
-* [Decisões de Design (ADRs)](arquitetura/adrs/README.md)
+* [Decisões de Design (ADRs)](arquitetura/decisoes-de-design-adrs/)
   * [ADR-001: Cookie-based Sessions](arquitetura/adrs/adr-001-cookie-based-sessions.md)
   * [ADR-002: Valkey para Sessões](arquitetura/adrs/adr-002-valkey-sessoes.md)
   * [ADR-003: AWS SDK vs REST](arquitetura/adrs/adr-003-aws-sdk-vs-rest.md)
