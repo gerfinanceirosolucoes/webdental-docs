@@ -33,21 +33,11 @@ return [
 | Staging (servidor PHP) | `http://internal-hmg-mevo-alb-internal-1641981751.sa-east-1.elb.amazonaws.com` | `hmg/mevo-api/internal-api-key` |
 | Produção (servidor PHP) | `http://internal-prd-mevo-alb-internal-1961577618.us-east-1.elb.amazonaws.com` | `prd/mevo-api/internal-api-key` |
 
-\* O ALB Internal só é alcançável de dentro da VPC (`172.31.0.0/16`). Da máquina local o acesso só funciona via VPN/túnel para a VPC — na prática, para dev local rode a Mevo API localmente (`npm run dev`) e aponte para `localhost:3000`.
+\* O ALB Internal só é alcançável de dentro da VPC. Da máquina local o acesso só funciona via VPN/túnel para a VPC — na prática, para dev local rode a Mevo API localmente (`npm run dev`) e aponte para `localhost:3000`.
 
 ## 3. Obter a API Key
 
-```bash
-aws secretsmanager get-secret-value \
-  --secret-id hmg/mevo-api/internal-api-key \
-  --region sa-east-1 --query SecretString --output text
-```
-
-Nunca compartilhar a key por e-mail ou chat — usar canal seguro. Nos servidores, restringir permissões do arquivo:
-
-```bash
-chmod 640 mevo-config.php
-```
+Solicitar ao Tech Lead a api_key de desenvolvimento
 
 ## 4. Testar a chamada
 
@@ -72,8 +62,3 @@ Respostas do middleware `verifyInternalAuth`:
 
 > Em dev local, o parâmetro SSM de whitelist não existe, então a validação de IP é pulada automaticamente (`if (!process.env.INTERNAL_ALLOWED_IPS_PARAMETER) return []`). Basta a `X-Api-Key`.
 
-## Troubleshooting
-
-- **`403` inesperado em staging** — verifique se o IP do servidor PHP está dentro de `172.31.0.0/16` e se o parâmetro SSM `/mevo-api/staging/internal-allowed-ips` está correto. Lembre-se do cache em memória por task: mudanças no SSM podem demorar a propagar (force new deployment se necessário).
-- **`401`** — a key no `mevo-config.php` diverge do secret atual. Se o secret foi rotacionado, atualize o `mevo-config.php` nos servidores e force novo deployment do ECS para renovar o cache das tasks (ver [Autenticação → Rotação de credenciais](autenticacao.md)).
-- **Timeout no ALB Internal** — chamada vinda de fora da VPC, ou Security Group `*-mevo-alb-internal-sg` sem ingress TCP 80 do seu IP/CIDR de origem.

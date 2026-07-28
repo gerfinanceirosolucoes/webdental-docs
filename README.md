@@ -6,23 +6,13 @@ Documentação técnica do ecossistema Webdental.
 
 | Projeto | Descrição | Status |
 |---------|-----------|--------|
-| [SSO](sso/README.md) | Sistema de autenticação unificada com AWS Cognito | 📝 Documentado |
+| [SSO](https://amorsaude-odonto.gitbook.io/amorsaude-odonto-docs/sso) | Sistema de autenticação unificada com AWS Cognito | 📝 Documentado |
+| [SSO](https://amorsaude-odonto.gitbook.io/amorsaude-odonto-docs/mevo-api) | Serviço Node.js/TypeScript responsável pela integração entre o Webdental e a plataforma Mevo para geração de receituários | 📝 Documentado |
 | Webdental Legado | Sistema Legado em PHP 7.0 | ⏳ Em breve |
 | API | API Laravel do Webdental | ⏳ Em breve |
 | Angular | Frontend Angular 6 | ⏳ Em breve |
 | AngularJS | Frontend legado | ⏳ Em breve |
 | Infraestrutura | AWS, CI/CD, Monitoramento | ⏳ Em breve |
-
-## Stack Técnica
-
-| Componente | Tecnologia |
-|------------|------------|
-| Backend | Laravel 5.4 / PHP 7.0 |
-| Frontend | Angular 6, AngularJS |
-| Banco de Dados | MariaDB |
-| Cache/Sessões | Valkey (Redis) |
-| Autenticação | AWS Cognito |
-| Infraestrutura | AWS (EC2) |
 
 ## Como Contribuir
 
