@@ -20,7 +20,7 @@ Na raiz do projeto PHP (mesmo diretório do `mevo-proxy.php`):
 return [
     // Local: aponte para a Mevo API rodando localmente ou para o ALB de staging
     'base_url' => 'http://localhost:3000',
-    'api_key'  => '<valor do secret hmg/mevo-api/internal-api-key>',
+    'api_key'  => '<valor do secret>',
 ];
 ```
 
@@ -29,9 +29,9 @@ return [
 | Ambiente | `base_url` | Fonte da `api_key` |
 |---|---|---|
 | Local (API local) | `http://localhost:3000` | Mesmo valor de staging |
-| Local (contra staging)* | `http://internal-hmg-mevo-alb-internal-1641981751.sa-east-1.elb.amazonaws.com` | `hmg/mevo-api/internal-api-key` |
-| Staging (servidor PHP) | `http://internal-hmg-mevo-alb-internal-1641981751.sa-east-1.elb.amazonaws.com` | `hmg/mevo-api/internal-api-key` |
-| Produção (servidor PHP) | `http://internal-prd-mevo-alb-internal-1961577618.us-east-1.elb.amazonaws.com` | `prd/mevo-api/internal-api-key` |
+| Local (contra staging)* | `http://internal-hmg-mevo-alb-internal-1641981751.sa-east-1.elb.amazonaws.com` | SSM |
+| Staging (servidor PHP) | `http://internal-hmg-mevo-alb-internal-1641981751.sa-east-1.elb.amazonaws.com` | SSM |
+| Produção (servidor PHP) | `http://internal-prd-mevo-alb-internal-1961577618.us-east-1.elb.amazonaws.com` | SSM |
 
 \* O ALB Internal só é alcançável de dentro da VPC. Da máquina local o acesso só funciona via VPN/túnel para a VPC — na prática, para dev local rode a Mevo API localmente (`npm run dev`) e aponte para `localhost:3000`.
 
