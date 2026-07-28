@@ -1,6 +1,6 @@
-# sumário
+# Webdental SSO
 
-## Introdução 2
+## Introdução
 
 * [Visão Geral](README.md)
 * [Glossário](introducao/glossario.md)
